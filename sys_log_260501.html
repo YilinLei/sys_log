@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>sys_log_260501</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(57,255,20,0.18), transparent 30%),
+        linear-gradient(135deg, #020403, #07110a);
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      color: #39ff14;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .desktop-icon {
+      position: fixed;
+      left: 36px;
+      top: 36px;
+      color: #39ff14;
+      text-align: center;
+      font-size: 14px;
+      user-select: none;
+      text-shadow: 0 0 8px rgba(57,255,20,0.7);
+    }
+
+    .desktop-icon .icon {
+      font-size: 42px;
+      margin-bottom: 6px;
+    }
+
+    .window, .popup {
+      width: 600px;
+      max-width: 88vw;
+      background: #020403;
+      border: 2px solid #39ff14;
+      box-shadow:
+        0 0 24px rgba(57,255,20,0.35),
+        16px 16px 0 rgba(0,0,0,0.7);
+      animation: pop 0.25s ease;
+    }
+
+    .window {
+      display: none;
+    }
+
+    .popup {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      animation: popCenter 0.25s ease;
+    }
+
+    .titlebar, .popup-title {
+      background: #061006;
+      color: #39ff14;
+      border-bottom: 1px solid #39ff14;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-weight: bold;
+      font-size: 15px;
+      text-shadow: 0 0 8px rgba(57,255,20,0.8);
+    }
+
+    .body, .popup-body {
+      padding: 30px;
+      min-height: 250px;
+      color: #39ff14;
+    }
+
+    .popup-body {
+      min-height: auto;
+    }
+
+    .step {
+      color: #86efac;
+      opacity: 0.85;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 26px;
+      color: #39ff14;
+      text-shadow: 0 0 10px rgba(57,255,20,0.6);
+    }
+
+    p {
+      color: #39ff14;
+      font-size: 17px;
+      line-height: 1.55;
+      margin: 10px 0;
+    }
+
+    b {
+      color: #b7ffad;
+      text-shadow: 0 0 8px rgba(57,255,20,0.6);
+    }
+
+    .progress-wrap {
+      margin-top: 24px;
+      border: 1px solid #39ff14;
+      height: 18px;
+      background: black;
+      box-shadow: inset 0 0 8px rgba(57,255,20,0.25);
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: #39ff14;
+      transition: width 0.35s ease;
+      box-shadow: 0 0 10px rgba(57,255,20,0.8);
+    }
+
+    .buttons, .popup-buttons {
+      border-top: 1px solid #39ff14;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: #061006;
+    }
+
+    .popup-buttons {
+      border-top: none;
+      padding: 18px 0 0;
+      justify-content: flex-start;
+    }
+
+    button {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 15px;
+      padding: 8px 18px;
+      border: 1px solid #39ff14;
+      background: black;
+      color: #39ff14;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 8px rgba(57,255,20,0.25);
+    }
+
+    button:hover {
+      background: #0b2a12;
+    }
+
+    button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .ninja {
+      display: inline-block;
+      margin-left: 8px;
+      animation: floatNinja 1.5s ease-in-out infinite;
+    }
+
+    .final {
+      text-align: center;
+    }
+
+    .final .cap {
+      font-size: 76px;
+      margin-bottom: 8px;
+      animation: float 1.6s ease-in-out infinite;
+    }
+
+    .final h1 {
+      font-size: 34px;
+      margin-top: 8px;
+    }
+
+    .final p {
+      font-size: 24px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 18px;
+      background: #39ff14;
+      margin-left: 4px;
+      animation: blink 0.75s infinite;
+      vertical-align: middle;
+    }
+
+    .confetti {
+      position: fixed;
+      top: -30px;
+      font-size: 24px;
+      animation: fall linear forwards;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popCenter {
+      from { transform: translate(-50%, -50%) scale(0.92); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes floatNinja {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="desktop-icon">
+    <div class="icon">😼</div>
+    sys_log_260501.exe
+  </div>
+
+  <div id="hackerPrompt" class="popup">
+    <div class="popup-title">
+      <span>System Alert</span>
+      <span>×</span>
+    </div>
+    <div class="popup-body">
+      <p><b>An unknown hacker is attempting to access your system.</b></p>
+      <p>Do you want to allow access?</p>
+      <div class="popup-buttons">
+        <button onclick="acceptHack()">Confirm</button>
+        <button onclick="rejectHack()">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="mainWindow">
+    <div class="titlebar">
+      <span id="windowTitle">Unknown Program</span>
+      <span>_ □ ×</span>
+    </div>
+
+    <div class="body" id="content"></div>
+
+    <div class="buttons">
+      <button id="backBtn" onclick="back()">Back</button>
+      <button id="nextBtn" onclick="next()">Next ></button>
+    </div>
+  </div>
+
+  <script>
+    function generateScanTime() {
+      const scanTimeElement = document.getElementById("scanTime");
+      if (!scanTimeElement) return;
+
+      const time = (Math.random() * 2 + 1).toFixed(2);
+      scanTimeElement.textContent = "Scan time: " + time + " seconds.";
+    }
+
+    const pages = [
+      {
+        title: "Unknown Program",
+        lines: [
+          '<div class="step">Step 1 of 7</div>',
+          '<h1>Well... 😈 you opened an unauthorized program.</h1>',
+          '<p>Your computer might be getting hijacked.</p>',
+          '<p>Or maybe not.</p>',
+          '<p>Click <b>Next</b> to find out.</p>'
+        ]
+      },
+      {
+        title: "Security Check",
+        lines: [
+          '<div class="step">Step 2 of 7</div>',
+          '<h1>Scanning target...<span class="ninja">🥷</span></h1>',
+          '<p>Identity confirmed.</p>',
+          '<p>Subject: Ryan Depree</p>',
+          '<p>Status: Being watched.</p>',
+          '<p id="scanTime"></p>',
+          '<div class="progress-wrap"><div class="progress" style="width: 25%"></div></div>'
+        ]
+      },
+      {
+        title: "Data Extraction",
+        lines: [
+          '<div class="step">Step 3 of 7</div>',
+          '<h1>Extracting records...</h1>',
+          '<p>Kindness: easy to see 🕊️</p>',
+          '<p>Intelligence: clear 🧠</p>',
+          '<p>Diligence: consistent 📈</p>',
+          '<p>Attention to detail: strong 🔍</p>',
+          '<p>Self-discipline: solid 🧭</p>',
+          '<p>Conclusion: a really great person ⭐⭐⭐⭐⭐</p>',
+          '<div class="progress-wrap"><div class="progress" style="width: 40%"></div></div>'
+        ]
+      },
+      {
+        title: "Verification",
+        lines: [
+          '<div class="step">Step 4 of 7</div>',
+          '<h1>Verifying results...</h1>',
+          '<p>All systems normal ✔️</p>',
+          '<p>No irregularities found ✔️</p>',
+          '<p>Everything checks out ✔️</p>',
+          '<p>This hacker has decided not to hijack your system 😏</p>',
+          '<p>Proceeding to the next step 🔓</p>',
+          '<div class="progress-wrap"><div class="progress" style="width: 55%"></div></div>'
+        ]
+      },
+      {
+        title: "Message Decryption",
+        lines: [
+          '<div class="step">Step 5 of 7</div>',
+          '<h1>Message incoming...</h1>',
+          '<p>Source: unknown.</p>',
+          '<p>Override detected.</p>',
+          '<p>Switching from system output...</p>',
+          '<p>to direct message 😼</p>',
+          '<div class="progress-wrap"><div class="progress" style="width: 70%"></div></div>'
+        ]
+      },
+      {
+        title: "Transmission",
+        lines: [
+          '<div class="step">Step 6 of 7</div>',
+          '<h1>Message incoming...</h1>',
+          '<p>Hi Ryan,</p>',
+          '<p>Congratulations on your graduation👨🏻‍🎓！</p>',
+          '<p>You made it.</p>',
+          '<p>Wish you all the best moving forward.</p>',
+          '<div class="progress-wrap"><div class="progress" style="width: 85%"></div></div>'
+        ]
+      },
+      {
+        title: "MESSAGE REVEALED",
+        lines: [
+          '<div class="final">',
+          '<div class="step">Step 7 of 7</div>',
+          '<div class="space"> </div>',
+          '<h1>Happy Graduation🥷！</h1>',
+          '<p>✨ 🎉 ⭐ 🎓</p>',
+          '<p>——2026.5.1</p>',
+          '<div class="progress-wrap"><div class="progress" style="width: 100%"></div></div>',
+          '</div>'
+        ]
+      }
+    ];
+
+    let index = 0;
+    let typingTimer = null;
+    let confettiStarted = false;
+
+    function acceptHack() {
+      document.getElementById("hackerPrompt").style.display = "none";
+      startProgram();
+    }
+
+    function rejectHack() {
+      alert("Request denied... but rejection is ineffective, press confirm to continue.");
+      document.getElementById("hackerPrompt").style.display = "none";
+      startProgram();
+    }
+
+    function startProgram() {
+      document.getElementById("mainWindow").style.display = "block";
+      index = 0;
+      render();
+    }
+
+    function render() {
+      clearTimeout(typingTimer);
+
+      document.getElementById("windowTitle").textContent = pages[index].title;
+      document.getElementById("backBtn").disabled = index === 0;
+      document.getElementById("nextBtn").textContent = index === pages.length - 1 ? "Finish" : "Next >";
+
+      const content = document.getElementById("content");
+      content.innerHTML = '<span class="cursor"></span>';
+
+      typeLines(pages[index].lines, 0);
+
+      if (index === pages.length - 1 && !confettiStarted) {
+        confettiStarted = true;
+        setTimeout(confetti, 900);
+      }
+    }
+
+    function typeLines(lines, lineIndex) {
+      const content = document.getElementById("content");
+      const cursor = content.querySelector(".cursor");
+
+      if (lineIndex >= lines.length) {
+        if (index === 1) {
+          generateScanTime();
+        }
+        const cursor = document.querySelector(".cursor");
+        if (cursor) cursor.style.display = "none";
+        return;
+      }
+
+      cursor.insertAdjacentHTML("beforebegin", lines[lineIndex]);
+      typingTimer = setTimeout(() => {
+        typeLines(lines, lineIndex + 1);
+      }, 280);
+    }
+
+    function next() {
+      if (index < pages.length - 1) {
+        index++;
+        render();
+      } else {
+        alert("Unknown program loaded successfully 🍀");
+      }
+    }
+
+    function back() {
+      if (index > 0) {
+        index--;
+        render();
+      }
+    }
+
+    function confetti() {
+      const symbols = ["🎉", "✨", "🎓", "🌟", "💐", "⭐"];
+      for (let i = 0; i < 70; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.animationDuration = 2.5 + Math.random() * 2.5 + "s";
+        c.style.animationDelay = Math.random() * 1.2 + "s";
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 6500);
+      }
+    }
+  </script>
+</body>
+</html>
